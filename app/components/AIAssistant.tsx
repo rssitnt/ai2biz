@@ -442,6 +442,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
   return (
     <div className="fixed bottom-10 right-10 z-50 sm:bottom-5 sm:right-5 md:bottom-10 md:right-10">
       <div className="relative z-50">
+        {/* Кнопка всегда видима, даже при открытом чате */}
         <button 
           onClick={onToggle}
           className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 animate-gradient-x rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
@@ -452,7 +453,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
 
         {isOpen && (
           <div 
-            className="absolute right-0 bottom-16 w-80 sm:w-80 md:w-96 card overflow-hidden glassmorphism backdrop-blur-md max-w-[calc(100vw-20px)] border border-white/10 relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-blue-500/30 before:via-purple-500/30 before:to-indigo-500/30 before:animate-gradient-x before:-z-10"
+            className="absolute right-0 bottom-20 w-80 sm:w-80 md:w-96 card overflow-hidden glassmorphism backdrop-blur-md max-w-[calc(100vw-20px)] border border-white/10 relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-blue-500/30 before:via-purple-500/30 before:to-indigo-500/30 before:animate-gradient-x before:-z-10"
           >
             <div className="p-4 border-b border-zinc-800/10 flex justify-between items-center select-none">
               <h3 className="text-lg font-semibold text-white">ИИ-ассистент</h3>
@@ -568,48 +569,50 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                     {inputMode === 'text' ? (
                       // Текстовый режим
                       <div className="w-full flex items-start relative justify-start">
-                        <textarea 
-                          ref={textareaRef}
-                          value={inputText}
-                          onChange={handleInputChange}
-                          onKeyDown={handleKeyPress}
-                          placeholder="Введите сообщение..."
-                          className="w-full pr-[100px] glassmorphism py-1.5 pl-3 placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-2xl bg-zinc-800/40 text-white text-sm min-h-[36px] max-h-[150px] resize-none overflow-hidden multi-line-input"
-                          rows={1}
-                          style={{ height: '36px', lineHeight: '1.2' }}
-                        />
-                        <div className="absolute bottom-[2px] right-3 flex gap-2 items-center z-10">
-                          <button 
-                            onClick={toggleSpeechRecognition}
-                            className={`h-9 w-9 flex-shrink-0 flex items-center justify-center rounded-full text-white hover:shadow-lg hover:scale-105 transition-all duration-300 ${
-                              isSpeechRecognizing 
-                                ? 'bg-red-500 voice-input-active' 
-                                : 'bg-zinc-700 hover:bg-zinc-600'
-                            }`}
-                            aria-label={isSpeechRecognizing ? "Остановить голосовой ввод" : "Голосовой ввод текста"}
-                          >
-                            <div className="relative">
-                              <MdKeyboardVoice className="text-lg" />
-                              {isSpeechRecognizing && (
-                                <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
-                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-400"></span>
-                                </span>
-                              )}
-                            </div>
-                          </button>
-                          <button 
-                            onClick={handleSendMessage}
-                            className={`h-9 w-9 flex-shrink-0 flex items-center justify-center rounded-full text-white hover:shadow-lg hover:scale-105 transition-all duration-300 ${
-                              inputText.trim().length > 0 
-                                ? 'bg-gradient-to-r from-blue-500 to-purple-500' 
-                                : 'bg-zinc-700 hover:bg-zinc-600'
-                            }`}
-                            disabled={inputText.trim().length === 0}
-                            aria-label="Отправить сообщение"
-                          >
-                            <FaArrowUp className="text-xs" />
-                          </button>
+                        <div className="w-full relative rounded-2xl bg-zinc-800/40 flex items-center">
+                          <textarea 
+                            ref={textareaRef}
+                            value={inputText}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyPress}
+                            placeholder="Введите сообщение..."
+                            className="w-full pr-[80px] glassmorphism py-1.5 pl-3 placeholder-opacity-50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 rounded-2xl bg-transparent text-white text-sm min-h-[36px] max-h-[120px] resize-none overflow-hidden"
+                            rows={1}
+                            style={{ height: '36px', lineHeight: '1.2' }}
+                          />
+                          <div className="absolute right-1 bottom-1 flex gap-1 items-center">
+                            <button 
+                              onClick={toggleSpeechRecognition}
+                              className={`h-7 w-7 flex-shrink-0 flex items-center justify-center rounded-full text-white hover:bg-zinc-700 transition-all duration-300 ${
+                                isSpeechRecognizing 
+                                  ? 'bg-red-500 voice-input-active' 
+                                  : 'bg-transparent'
+                              }`}
+                              aria-label={isSpeechRecognizing ? "Остановить голосовой ввод" : "Голосовой ввод текста"}
+                            >
+                              <div className="relative">
+                                <MdKeyboardVoice className="text-sm" />
+                                {isSpeechRecognizing && (
+                                  <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-400"></span>
+                                  </span>
+                                )}
+                              </div>
+                            </button>
+                            <button 
+                              onClick={handleSendMessage}
+                              className={`h-7 w-7 flex-shrink-0 flex items-center justify-center rounded-full text-white transition-all duration-300 ${
+                                inputText.trim().length > 0 
+                                  ? 'bg-gradient-to-r from-blue-500 to-purple-500' 
+                                  : 'bg-transparent hover:bg-zinc-700'
+                              }`}
+                              disabled={inputText.trim().length === 0}
+                              aria-label="Отправить сообщение"
+                            >
+                              <FaArrowUp className="text-xs" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ) : (
