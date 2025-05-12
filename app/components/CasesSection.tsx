@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 
 type CaseResult = {
@@ -49,7 +49,7 @@ const cases: Case[] = [
   {
     title: 'Предиктивная диагностика навесного оборудования',
     company: 'Группа компаний "Традиция"',
-    description: 'Разработали систему на базе машинного обучения для прогнозирования отказов гидравлических и механических узлов навесного оборудования. Агент собирает и анализирует данные с датчиков в реальном времени.',
+    description: 'Разработали систему на базе машинного обучения для прогнозирования отказов гидравлических и механических узлов навесного оборудования.',
     results: [
       { text: 'Снижение простоев техники', value: '48%' },
       { text: 'Сокращение затрат на аварийные ремонты', value: '35%' },
@@ -57,7 +57,7 @@ const cases: Case[] = [
     ]
   },
   {
-    title: 'Компьютерное зрение для контроля качества сварных швов',
+    title: 'Компьютерное зрение для контроля качества',
     company: 'Группа компаний "Традиция"',
     description: 'Внедрили систему автоматического визуального контроля при помощи камер и нейросетей для выявления дефектов сварки на конвейере.',
     results: [
@@ -65,367 +65,139 @@ const cases: Case[] = [
       { text: 'Рост пропускной способности линии', value: '27%' },
       { text: 'Снижение ручных проверок', value: '90%' }
     ]
-  },
-  {
-    title: 'Оптимизация логистики запчастей и аксессуаров',
-    company: 'Группа компаний "Традиция"',
-    description: 'Реализовали ИИ-модель для планирования складских запасов и маршрутов доставки по дилерским центрам и сервисам.',
-    results: [
-      { text: 'Сокращение запасов на складе', value: '33%' },
-      { text: 'Уменьшение сроков доставки', value: '18%' },
-      { text: 'Экономия транспортных расходов', value: '12%' }
-    ]
-  },
-  {
-    title: 'Роботизированная автоматизация сборки навесных механизмов',
-    company: 'Группа компаний "Традиция"',
-    description: 'Настроили коллаборативных роботов для выполнения операций сборки и калибровки узлов, интегрированных с MES-системой.',
-    results: [
-      { text: 'Увеличение производительности линии', value: '55%' },
-      { text: 'Снижение брака при сборке', value: '41%' },
-      { text: 'Сокращение времени переналадки', value: '60%' }
-    ]
-  },
-  {
-    title: 'Прогнозирование спроса на навесное оборудование',
-    company: 'Группа компаний "Традиция"',
-    description: 'Внедрили модель машинного обучения для анализа исторических продаж, сезонности и макроэкономических факторов с целью точного планирования производства.',
-    results: [
-      { text: 'Точность прогноза спроса повысилась', value: 'до 92%' },
-      { text: 'Сокращение отгрузок с задержкой', value: '50%' },
-      { text: 'Уменьшение избыточных остатков', value: '28%' }
-    ]
-  },
-  {
-    title: 'Автоматизация планирования смен и загрузки оборудования',
-    company: 'Группа компаний "Традиция"',
-    description: 'Создан ИИ-алгоритм для динамического составления графиков работы операторов и машин на основе прогноза заказов и мастер-данных.',
-    results: [
-      { text: 'Снижение простоев оборудования', value: '38%' },
-      { text: 'Увеличение выполнения плана', value: '24%' },
-      { text: 'Оптимизация затрат на сверхурочные', value: '31%' }
-    ]
   }
 ];
 
 const CasesSection = () => {
-  const outerCarouselRef = useRef<HTMLDivElement>(null);
-  const innerCarouselRef = useRef<HTMLDivElement>(null);
-  const [activeCase, setActiveCase] = useState<number | null>(null);
   const [isPaused, setIsPaused] = useState(false);
-  const [isCloned, setIsCloned] = useState(false);
-
-  // Состояния для обработки свайпов
-  const [isDragging, setIsDragging] = useState(false); 
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
-
-  // Дублируем карточки для создания бесконечной карусели
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  
   useEffect(() => {
-    if (innerCarouselRef.current && !isCloned && cases.length > 0) {
-      try {
-        // Клонируем первую группу карточек и добавляем в конец
-        const cards = innerCarouselRef.current.children;
-        if (cards.length === cases.length) {
-          // Добавляем больше клонов для более надежной бесконечной карусели
-          for (let i = 0; i < cases.length; i++) {
-            const clone = cards[i].cloneNode(true) as HTMLElement;
-            innerCarouselRef.current.appendChild(clone);
-          }
-          setIsCloned(true);
-          
-          // Прокручиваем к первому элементу
-          setTimeout(() => {
-            if (outerCarouselRef.current) {
-              const cardWidth = cards[0].clientWidth || 0;
-              const gapWidth = 24;
-              outerCarouselRef.current.scrollLeft = 0; // Стартуем с начала для более предсказуемого поведения
-            }
-          }, 100);
-        }
-      } catch (error) {
-        console.error('Ошибка при клонировании элементов карусели:', error);
-      }
-    }
-  }, [isCloned, cases.length]);
+    const carousel = carouselRef.current;
+    if (!carousel) return;
 
-  // Автоматическое прокручивание карусели с постоянной скоростью
-  useEffect(() => {
-    let animationId: number | null = null;
-    const speed = 0.6; // Уменьшаем скорость для более плавного движения
+    // Дублируем кейсы для бесконечного скролла
+    const firstItems = carousel.querySelectorAll('.case-item');
+    firstItems.forEach(item => {
+      const clone = item.cloneNode(true);
+      carousel.appendChild(clone);
+    });
     
-    const animate = () => {
-      if (!outerCarouselRef.current || !innerCarouselRef.current) {
+    // Функция для автоматической прокрутки
+    let lastTime = 0;
+    let animationId: number;
+    
+    const animate = (time: number) => {
+      if (isPaused) {
+        lastTime = time;
         animationId = requestAnimationFrame(animate);
         return;
       }
       
-      // Если пользователь взаимодействует с каруселью - пропускаем кадр
-      if (isPaused || isDragging) {
-        animationId = requestAnimationFrame(animate);
-        return;
-      }
-      
-      const carousel = outerCarouselRef.current;
-      const container = innerCarouselRef.current;
-      
-      // Всегда движемся только вправо для бесконечной карусели
-      carousel.scrollLeft += speed;
-      
-      // Проверка края для циклического перехода
-      // Если достигли края, перепрыгиваем в начало
-      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-      
-      if (carousel.scrollLeft >= maxScroll - 20) {
-        // Прыгаем в начало для бесконечного цикла
-        carousel.scrollLeft = 0;
+      // Ограничиваем скорость анимации
+      const elapsedTime = time - lastTime;
+      if (elapsedTime > 16) { // ~60fps
+        lastTime = time;
+        
+        // Рассчитываем новую позицию
+        carousel.scrollLeft += 1; // Медленная скорость прокрутки
+        
+        // Бесконечная прокрутка
+        if (carousel.scrollLeft >= carousel.scrollWidth / 2) {
+          carousel.scrollLeft = 0;
+        }
       }
       
       animationId = requestAnimationFrame(animate);
     };
     
-    // Запускаем анимацию с небольшой задержкой для инициализации
-    const timeoutId = setTimeout(() => {
-      animationId = requestAnimationFrame(animate);
-      
-      // Форсируем начальное движение
-      if (outerCarouselRef.current) {
-        outerCarouselRef.current.scrollLeft = 0;
-      }
-    }, 1000);
+    animationId = requestAnimationFrame(animate);
     
     return () => {
-      clearTimeout(timeoutId);
-      if (animationId) cancelAnimationFrame(animationId);
+      cancelAnimationFrame(animationId);
     };
-  }, [isPaused, isDragging]);
-
-  // Обработчики событий для свайпов
-  const handleMouseDown = (e: React.MouseEvent) => {
-    if (!outerCarouselRef.current) return;
-    
-    // Проверяем, что это не прокрутка тачпадом
-    if (e.buttons === 1) { // Левая кнопка мыши
-      setIsDragging(true);
-      setIsPaused(true);
-      setStartX(e.pageX - outerCarouselRef.current.offsetLeft);
-      setScrollLeft(outerCarouselRef.current.scrollLeft);
-    }
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (!outerCarouselRef.current) return;
-    
-    // Проверяем, что это не прокрутка тачпадом
-    if (e.touches.length === 1) {
-      setIsDragging(true);
-      setIsPaused(true);
-      setStartX(e.touches[0].pageX - outerCarouselRef.current.offsetLeft);
-      setScrollLeft(outerCarouselRef.current.scrollLeft);
-    }
-  };
-
-  const handleWheel = (e: React.WheelEvent) => {
-    if (!outerCarouselRef.current) return;
-    
-    // Предотвращаем стандартную прокрутку страницы
-    e.preventDefault();
-    
-    // Плавная прокрутка карусели
-    outerCarouselRef.current.style.scrollBehavior = 'smooth';
-    outerCarouselRef.current.scrollLeft += e.deltaX;
-    
-    // Возвращаем обычное поведение после прокрутки
-    setTimeout(() => {
-      if (outerCarouselRef.current) {
-        outerCarouselRef.current.style.scrollBehavior = 'auto';
-      }
-    }, 500);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!isDragging || !outerCarouselRef.current) return;
-    
-    const x = e.pageX - outerCarouselRef.current.offsetLeft;
-    const walk = (x - startX) * 0.5; // Уменьшили множитель скорости
-    outerCarouselRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isDragging || !outerCarouselRef.current) return;
-    
-    const x = e.touches[0].pageX - outerCarouselRef.current.offsetLeft;
-    const walk = (x - startX) * 0.5; // Уменьшили множитель скорости
-    outerCarouselRef.current.scrollLeft = scrollLeft - walk;
-  };
-
-  const handleDragEnd = () => {
-    if (!outerCarouselRef.current) return;
-    
-    // Добавляем плавную прокрутку при отпускании
-    outerCarouselRef.current.style.scrollBehavior = 'smooth';
-    
-    // Через небольшую задержку возвращаем обычное поведение
-    setTimeout(() => {
-      if (outerCarouselRef.current) {
-        outerCarouselRef.current.style.scrollBehavior = 'auto';
-      }
-    }, 500);
-    
-    setIsDragging(false);
-    setIsPaused(false);
-  };
-
-  // Обработчик быстрого пролистывания клавишами
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!outerCarouselRef.current) return;
-    
-    const cardWidth = outerCarouselRef.current.firstElementChild?.firstElementChild?.clientWidth || 0;
-    const gapWidth = 24;
-    
-    // Добавляем плавную прокрутку для клавиш
-    outerCarouselRef.current.style.scrollBehavior = 'smooth';
-    
-    if (e.key === 'ArrowLeft') {
-      outerCarouselRef.current.scrollLeft -= (cardWidth + gapWidth);
-      e.preventDefault();
-    } else if (e.key === 'ArrowRight') {
-      outerCarouselRef.current.scrollLeft += (cardWidth + gapWidth);
-      e.preventDefault();
-    }
-    
-    // Возвращаем обычное поведение после прокрутки
-    setTimeout(() => {
-      if (outerCarouselRef.current) {
-        outerCarouselRef.current.style.scrollBehavior = 'auto';
-      }
-    }, 500);
-  };
-
-  // Комбинированный обработчик для события onMouseLeave
-  const handleMouseLeave = () => {
-    if (isDragging) {
-      handleDragEnd();
-    } else {
-      setIsPaused(false);
-    }
-  };
-
-  // Функция для создания стиля обводки с индивидуальными границами
-  const getBorderStyles = useCallback((isActive: boolean) => {
-    if (!isActive) {
-      return {
-        borderTopWidth: '0px',
-        borderRightWidth: '0px',
-        borderBottomWidth: '0px',
-        borderLeftWidth: '0px',
-        borderColor: 'rgb(59, 130, 246)', // blue-500
-        borderStyle: 'solid',
-        transitionProperty: 'border-width',
-        transitionTimingFunction: 'ease-out',
-      };
-    }
-
-    return {
-      borderTopWidth: '1px',
-      borderRightWidth: '1px',
-      borderBottomWidth: '1px',
-      borderLeftWidth: '1px',
-      borderColor: 'rgb(59, 130, 246)', // blue-500
-      borderStyle: 'solid',
-      transitionProperty: 'border-width',
-      transitionTimingFunction: 'ease-out',
-      transitionDuration: '0.2s',
-      transitionDelay: '0s, 0.1s, 0.2s, 0.3s', // Задержки для каждой стороны
-    };
-  }, []);
+  }, [isPaused]);
 
   return (
-    <section id="cases" className="pt-28 pb-20 relative overflow-hidden bg-black">
+    <section id="cases" className="py-28 relative overflow-hidden bg-black">
       <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-soft-light" />
       
-      <div className="container mx-auto px-4 relative z-10 mb-16">
-        <div className="flex justify-center w-full">
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="flex justify-center w-full mb-16">
           <motion.h2 
             className="text-4xl md:text-5xl font-bold text-white mt-4"
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ 
-              duration: 0.02,
-              ease: "easeOut"
+              duration: 0.8, 
+              ease: [0.25, 0.1, 0.25, 1]
             }}
           >
             Кейсы
           </motion.h2>
         </div>
-      </div>
-      
-      <div 
-        ref={outerCarouselRef}
-        className={`flex overflow-x-hidden pb-8 pt-4 hide-scrollbar select-none w-full
-          ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
-        style={{ 
-          scrollBehavior: isDragging ? 'auto' : 'smooth', 
-          userSelect: 'none',
-          WebkitUserSelect: 'none',
-          scrollSnapType: 'x mandatory',
-          position: 'relative',
-          zIndex: 20 // Повышаем z-index, чтобы быть выше свечения курсора
-        }}
-        onMouseEnter={() => setIsPaused(true)}
-        onMouseLeave={handleMouseLeave}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleDragEnd}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleDragEnd}
-        onWheel={handleWheel}
-        onKeyDown={handleKeyDown}
-        tabIndex={0}
-      >
+        
+        {/* Карусель с автоматической прокруткой */}
         <div 
-          ref={innerCarouselRef}
-          className="flex gap-6 md:gap-8 pl-6 pr-12 md:pl-[calc(50vw-500px)] md:pr-24 select-none [&>*]:transition-all [&>*]:duration-50"
+          className="overflow-x-hidden relative"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
         >
-          {cases.map((caseItem, i) => (
-            <div
-              key={i}
-              className="flex-shrink-0 w-[350px] card gpu-accelerated hover:scale-[1.02] hover:-translate-y-1 transition-transform duration-50 select-none relative overflow-hidden scroll-snap-align-start"
-              style={{
-                transform: 'translate3d(0,0,0)', 
-                willChange: 'transform',
-                pointerEvents: isDragging ? 'none' : 'auto',
-                borderRadius: '12px',
-                scrollSnapAlign: 'start',
-                zIndex: 2 // Добавляем z-index карточкам
-              }}
-              onMouseEnter={() => setActiveCase(i)}
-              onMouseLeave={() => setActiveCase(null)}
-            >
-              <div className="p-6">
-                <span className="text-xs text-blue-400 font-semibold block mb-2">{caseItem.company}</span>
-                <h3 className={`text-xl font-semibold mb-3 transition-colors duration-100 ${
-                  activeCase === i ? 'text-blue-500' : ''
-                }`}>{caseItem.title}</h3>
+          <div 
+            ref={carouselRef}
+            className="flex items-stretch gap-6 px-4 py-6 w-max overflow-visible"
+            style={{ scrollBehavior: 'smooth' }}
+          >
+            {cases.map((caseItem, index) => (
+              <motion.div
+                key={`case-${index}`}
+                className="case-item w-[300px] md:w-[350px] flex-shrink-0 bg-gradient-to-br from-blue-950/80 to-blue-900/50 backdrop-blur-sm rounded-xl overflow-hidden border border-blue-800/30 relative group"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
+                {/* Градиентная рамка */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-tr from-blue-500/10 via-purple-500/10 to-indigo-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 
-                <p className="mb-5 text-sm opacity-70">{caseItem.description}</p>
-                
-                <div className="mb-2">
-                  <h4 className="text-sm font-semibold opacity-80 mb-3">Результаты:</h4>
-                  <ul className="space-y-2">
-                    {caseItem.results.map((result, j) => (
-                      <li key={j} className="flex justify-between text-sm">
-                        <span className="opacity-70">{result.text}</span>
-                        <span className="font-medium text-blue-500">{result.value}</span>
-                      </li>
-                    ))}
-                  </ul>
+                <div className="p-6 flex flex-col h-full">
+                  <div className="mb-3">
+                    <h3 className="text-xl font-bold text-white mb-1">{caseItem.title}</h3>
+                    <p className="text-sm text-blue-300">{caseItem.company}</p>
+                  </div>
+                  
+                  <p className="text-sm text-gray-300 mb-4 flex-grow">{caseItem.description}</p>
+                  
+                  <div className="mt-auto">
+                    <h4 className="text-sm font-semibold text-blue-300 mb-2">Результаты:</h4>
+                    <div className="grid grid-cols-1 gap-2">
+                      {caseItem.results.map((result, resultIndex) => (
+                        <div key={resultIndex} className="flex justify-between items-center">
+                          <p className="text-xs text-gray-400">{result.text}</p>
+                          <span className="text-xs font-bold text-blue-400 ml-2">{result.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+                
+                {/* Эффект свечения при наведении */}
+                <motion.div
+                  className="absolute inset-0 rounded-xl bg-blue-500/5 blur-xl -z-10 pointer-events-none"
+                  initial={{ opacity: 0 }}
+                  animate={{ 
+                    opacity: hoveredIndex === index ? 0.5 : 0,
+                    scale: hoveredIndex === index ? 1.1 : 1
+                  }}
+                  transition={{ duration: 0.4 }}
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

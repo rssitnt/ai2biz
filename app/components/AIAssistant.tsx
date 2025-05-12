@@ -557,7 +557,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                         <div 
                           className={`rounded-lg p-2 text-sm max-w-[85%] ${
                             message.sender === 'user' 
-                              ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' 
+                              ? 'bg-blue-600 text-white' 
                               : 'bg-blue-600/20 text-white'
                           }`}
                         >
