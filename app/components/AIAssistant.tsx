@@ -444,7 +444,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
       <div className="relative z-50">
         <button 
           onClick={onToggle}
-          className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+          className="w-14 h-14 bg-gradient-to-r from-blue-500 to-purple-500 animate-gradient-x rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
           aria-label="Открыть ИИ-ассистент"
         >
           <FaRobot className="text-2xl" />
@@ -452,7 +452,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
 
         {isOpen && (
           <div 
-            className="absolute right-0 bottom-16 w-80 sm:w-80 md:w-96 card overflow-hidden glassmorphism backdrop-blur-md max-w-[calc(100vw-20px)]"
+            className="absolute right-0 bottom-16 w-80 sm:w-80 md:w-96 card overflow-hidden glassmorphism backdrop-blur-md max-w-[calc(100vw-20px)] border border-white/10 relative before:absolute before:inset-0 before:bg-gradient-to-r before:from-blue-500/30 before:via-purple-500/30 before:to-indigo-500/30 before:animate-gradient-x before:-z-10"
           >
             <div className="p-4 border-b border-zinc-800/10 flex justify-between items-center select-none">
               <h3 className="text-lg font-semibold text-white">ИИ-ассистент</h3>
