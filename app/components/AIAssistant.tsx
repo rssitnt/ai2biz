@@ -86,6 +86,13 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
   // Добавляем реф для поля ввода текста
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Сбрасываем выбор типа чата при закрытии окна
+  useEffect(() => {
+    if (!isOpen) {
+      setHasChosenChatType(false);
+    }
+  }, [isOpen]);
+
   // Обработчик выбора типа чата
   const handleChatTypeChoice = useCallback((type: 'site' | 'telegram') => {
     setChatType(type);
