@@ -77,10 +77,11 @@ const AdvantagesSection = () => {
           {advantages.map((advantage, i) => (
             <div 
               key={i}
-              className="relative h-80 card cursor-pointer gpu-accelerated transition-all duration-100 hover:scale-[1.02] overflow-hidden"
+              className="relative h-80 card cursor-pointer gpu-accelerated transition-transform duration-100 hover:scale-[1.02] bg-zinc-900/50 rounded-xl overflow-hidden border-0 hover:border-0 focus:border-0 outline-none"
               onMouseEnter={() => setHoveredCard(i)}
               onMouseLeave={() => setHoveredCard(null)}
               onTouchStart={() => setHoveredCard(i === hoveredCard ? null : i)}
+              style={{ border: 'none', boxShadow: 'none' }}
             >
               <div className="absolute inset-0 flex flex-col items-center justify-center p-8">
                 {/* Иконка и заголовок (всегда видны) */}

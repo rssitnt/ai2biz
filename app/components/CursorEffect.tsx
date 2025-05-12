@@ -107,17 +107,11 @@ const CursorEffect = () => {
   return (
     // Главный контейнер
     <div 
-      className="cursor-glow"
+      className="cursor-glow fixed top-0 left-0 w-full h-full pointer-events-none"
       style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: 0, 
-        width: '100vw', 
-        height: '100vh',
-        pointerEvents: 'none',
-        zIndex: 0, // Изменяем с -1 на 0, чтобы эффект был виден
-        opacity: opacity, // применяем вычисленную прозрачность
-        transition: 'opacity 0.3s ease-in-out' // добавляем CSS transition
+        opacity: opacity,
+        transition: 'opacity 0.3s ease-in-out',
+        zIndex: 10 // Высокий z-index, но ниже чем интерактивные элементы
       }}
     >
       {/* Большой градиентный ореол */}
@@ -131,15 +125,16 @@ const CursorEffect = () => {
           borderRadius: '50%',
           background: `
             radial-gradient(circle, 
-              rgba(96, 165, 250, 0.12) 0%, 
-              rgba(59, 130, 246, 0.10) 20%, 
-              rgba(139, 92, 246, 0.08) 40%, 
-              rgba(236, 72, 153, 0.06) 60%, 
+              rgba(96, 165, 250, 0.15) 0%, 
+              rgba(59, 130, 246, 0.12) 20%, 
+              rgba(139, 92, 246, 0.10) 40%, 
+              rgba(236, 72, 153, 0.08) 60%, 
               transparent 80%)
           `,
           filter: 'blur(60px)',
-          mixBlendMode: 'screen',
+          mixBlendMode: 'lighten',
           animation: 'rainbow-shift 15s ease infinite',
+          willChange: 'transform, filter'
         }}
       />
       
@@ -154,15 +149,16 @@ const CursorEffect = () => {
           borderRadius: '50%',
           background: `
             radial-gradient(circle, 
-              rgba(236, 72, 153, 0.12) 0%, 
-              rgba(139, 92, 246, 0.10) 30%, 
-              rgba(59, 130, 246, 0.08) 60%, 
-              rgba(96, 165, 250, 0.06) 80%,
+              rgba(236, 72, 153, 0.2) 0%, 
+              rgba(139, 92, 246, 0.15) 30%, 
+              rgba(59, 130, 246, 0.1) 60%, 
+              rgba(96, 165, 250, 0.08) 80%,
               transparent 90%)
           `,
           filter: 'blur(30px)',
           mixBlendMode: 'screen',
           animation: 'rainbow-shift-reverse 10.5s ease infinite',
+          willChange: 'transform, filter'
         }}
       />
 
