@@ -1,26 +1,444 @@
-@import "tailwindcss";
+/* postcss-ignore-next-line */
+@tailwind base;
+/* postcss-ignore-next-line */
+@tailwind components;
+/* postcss-ignore-next-line */
+@tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Учитываем высоту фиксированного хедера */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+:root {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+  --foreground: 248, 250, 252; /* slate-50 */
+  --background: 0, 0, 0; /* черный */
+  --background-card: 18, 18, 18; /* темно-серый */
+  --card-border: 34, 34, 34; /* серый */
+  --card-hover: 34, 34, 34; /* серый */
+  --primary: 59, 130, 246; /* blue-500 */
+  --secondary: 236, 72, 153; /* pink-500 */
+  --accent: 139, 92, 246; /* purple-500 */
+  --tertiary: 96, 165, 250; /* blue-400 */
+  color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(var(--foreground));
+  background-color: rgb(var(--background));
+  background: rgb(var(--background));
+  overscroll-behavior: none;
+  overflow-x: hidden;
+}
+
+/* Утилитарные классы */
+.card {
+  background-color: rgba(var(--background-card), 0.8);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-color: rgba(var(--card-border), 0.5);
+  will-change: transform, opacity;
+  transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.card:hover {
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+  background-color: rgba(var(--background-card), 0.9);
+  border-color: rgba(var(--card-border), 0.8);
+  transition-duration: 700ms;
+}
+
+.section-gradient {
+  background-color: rgb(var(--background));
+}
+
+/* Glassmorphism эффект для интерактивных элементов */
+.glassmorphism {
+  background-color: rgba(var(--background-card), 0.7);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-color: rgba(var(--card-border), 0.3);
+  backdrop-filter: blur(5px);
+  will-change: backdrop-filter, background-color;
+  transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.text-gradient {
+  color: white;
+}
+
+/* Скрытие обратной стороны карточек */
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Кубическая функция easing для более плавных анимаций */
+.ease-smooth {
+  transition-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* Класс для элементов, которые используют графический ускоритель */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Класс для плавных переходов при прокрутке */
+.smoothed-section {
+  transition: all 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Стилизация скроллбара */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 150, 0.4);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 120, 180, 0.5);
+}
+
+/* Добавляем перспективу для 3D-эффектов */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+/* Анимированный градиент для кнопок */
+.animated-gradient-button {
+  background: linear-gradient(270deg, 
+    rgba(59, 130, 246, 0.9), 
+    rgba(139, 92, 246, 0.9), 
+    rgba(236, 72, 153, 0.9), 
+    rgba(59, 130, 246, 0.9));
+  background-size: 300% 100%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Кнопка с эффектом наполнения градиентом */
+.gradient-fill-button {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.gradient-fill-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(270deg, 
+    rgba(59, 130, 246, 0.9), 
+    rgba(139, 92, 246, 0.9), 
+    rgba(236, 72, 153, 0.9), 
+    rgba(59, 130, 246, 0.9));
+  background-size: 300% 100%;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: gradient-shift 3s ease infinite;
+}
+
+.gradient-fill-button.active::before {
+  opacity: 1;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@layer utilities {
+  /* Скрытие полосы прокрутки для Chrome, Safari и Opera */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Скрытие полосы прокрутки для IE, Edge и Firefox */
+  .hide-scrollbar {
+    -ms-overflow-style: none;  /* IE и Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  /* Для 3D-эффектов */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  
+  /* Плавные переходы */
+  .smooth-transition {
+    transition: all 0.8s cubic-bezier(0.45, 0, 0.25, 1);
+    will-change: transform, opacity;
+  }
+  
+  /* Заменяем градиентную анимацию текста на обычный белый текст */
+  .text-gradient-animated {
+    color: white;
+  }
+}
+
+/* Стили для кастомного курсора */
+.cursor-gradient {
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: plus-lighter;
+  background: radial-gradient(circle, 
+    rgba(var(--primary), 0.6) 0%, 
+    rgba(var(--secondary), 0.3) 50%, 
+    rgba(var(--accent), 0) 70%);
+}
+
+/* Стили для анимированной кнопки микрофона */
+.mic-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(20, 20, 30, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.mic-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(270deg, 
+    rgba(59, 130, 246, 0.9), 
+    rgba(139, 92, 246, 0.9), 
+    rgba(236, 72, 153, 0.9), 
+    rgba(59, 130, 246, 0.9));
+  background-size: 300% 100%;
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease;
+}
+
+.mic-button.active::before {
+  opacity: 1;
+  animation: gradient-shift 3s ease infinite;
+}
+
+.mic-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(var(--primary), 0.4);
+}
+
+.mic-button.active {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(var(--primary), 0.6);
+}
+
+/* Стили для визуализации звука на микрофоне */
+.mic-button .mic-icon {
+  transition: transform 0.15s ease;
+}
+
+.mic-button .mic-pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(59, 130, 246, 0.6);
+  transform: scale(1);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@keyframes pulse-out {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.mic-button .animate-pulse-out {
+  animation: pulse-out 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Анимация уровня громкости для микрофона */
+.mic-wave {
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0 8px;
+}
+
+.mic-wave-bar {
+  width: 3px;
+  background: linear-gradient(to top, rgba(59, 130, 246, 0.7), rgba(139, 92, 246, 0.7));
+  margin: 0 1px;
+  border-radius: 1px;
+  transform-origin: bottom;
+  transition: height 0.1s ease-out;
+}
+
+/* Скроллбар для чата в ИИ-ассистенте */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollbar-thumb-zinc-700::-webkit-scrollbar-thumb {
+  background-color: rgb(63, 63, 70);
+  border-radius: 2px;
+}
+
+.scrollbar-track-transparent::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/* Улучшенные стили для ИИ-ассистента */
+.ai-assistant-card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+
+.ai-assistant-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.ai-assistant-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.ai-assistant-message {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Стили для кнопки голосового ввода текста */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-pulse {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.speech-recognition-active {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.3);
+}
+
+/* Пульсирующее свечение для активного голосового ввода */
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(239, 68, 68, 0.5);
+  }
+}
+
+.voice-input-active {
+  animation: glow 2s infinite ease-in-out;
+}
+
+/* Стили для многострочного поля ввода */
+.multi-line-input {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.4;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-right: 100px !important; /* Гарантируем пространство для кнопок */
+}
+
+.multi-line-input:empty, .multi-line-input:not([value]) {
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: normal;
+}
+
+.multi-line-input::-webkit-scrollbar {
+  width: 4px;
+}
+
+.multi-line-input::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.multi-line-input::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 150, 0.4);
+  border-radius: 3px;
+}
+
+/* Предотвращение выделения текста в интерактивных элементах */
+.no-select, 
+button, 
+.interactive-element {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
