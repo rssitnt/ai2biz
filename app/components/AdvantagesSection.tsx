@@ -77,7 +77,7 @@ const AdvantagesSection = () => {
           {advantages.map((advantage, i) => (
             <div 
               key={i}
-              className="relative h-80 card cursor-pointer gpu-accelerated transition-all duration-300 hover:scale-[1.02] hover:shadow-lg overflow-hidden"
+              className="relative h-80 card cursor-pointer gpu-accelerated transition-all duration-100 hover:scale-[1.02] overflow-hidden"
               onMouseEnter={() => setHoveredCard(i)}
               onMouseLeave={() => setHoveredCard(null)}
               onTouchStart={() => setHoveredCard(i === hoveredCard ? null : i)}

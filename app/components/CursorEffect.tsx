@@ -115,7 +115,7 @@ const CursorEffect = () => {
         width: '100vw', 
         height: '100vh',
         pointerEvents: 'none',
-        zIndex: -1, // Отрицательный z-index, чтобы эффект был гарантированно позади всех элементов
+        zIndex: 0, // Изменяем с -1 на 0, чтобы эффект был виден
         opacity: opacity, // применяем вычисленную прозрачность
         transition: 'opacity 0.3s ease-in-out' // добавляем CSS transition
       }}
