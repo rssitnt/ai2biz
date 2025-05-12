@@ -333,7 +333,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
         setIsSpeechRecognizing(true);
       };
 
-      recognition.onresult = (event) => {
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
         const transcript = Array.from(event.results)
           .map(result => result[0].transcript)
           .join('');
@@ -341,7 +341,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
         setInputText(transcript);
       };
 
-      recognition.onerror = (event) => {
+      recognition.onerror = (event: SpeechRecognitionEvent) => {
         console.error('Ошибка распознавания речи:', event.error);
         setIsSpeechRecognizing(false);
       };
@@ -440,7 +440,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
   }, [inputText, autoResizeTextarea]);
 
   return (
-    <div className="fixed bottom-10 right-10 z-50">
+    <div className="fixed bottom-10 right-10 z-50 sm:bottom-5 sm:right-5 md:bottom-10 md:right-10">
       <div className="relative z-50">
         <button 
           onClick={onToggle}
@@ -452,7 +452,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
 
         {isOpen && (
           <div 
-            className="absolute right-0 bottom-16 w-96 card overflow-hidden glassmorphism backdrop-blur-md"
+            className="absolute right-0 bottom-16 w-80 sm:w-80 md:w-96 card overflow-hidden glassmorphism backdrop-blur-md max-w-[calc(100vw-20px)]"
           >
             <div className="p-4 border-b border-zinc-800/10 flex justify-between items-center select-none">
               <h3 className="text-lg font-semibold text-white">ИИ-ассистент</h3>
@@ -546,7 +546,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                 <div>
                   <div 
                     ref={chatContainerRef}
-                    className="p-3 mb-4 h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent"
+                    className="p-3 mb-4 h-40 sm:h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent"
                   >
                     {messages.map((message, index) => (
                       <div key={index} className={`flex items-start mb-3 ${message.sender === 'user' ? 'justify-end' : ''}`}>
@@ -574,7 +574,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                           onChange={handleInputChange}
                           onKeyDown={handleKeyPress}
                           placeholder="Введите сообщение..."
-                          className="w-2/3 pr-[100px] glassmorphism py-1.5 pl-3 placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-2xl bg-zinc-800/40 text-white text-sm min-h-[36px] max-h-[150px] resize-none overflow-hidden multi-line-input"
+                          className="w-full pr-[100px] glassmorphism py-1.5 pl-3 placeholder-opacity-50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-2xl bg-zinc-800/40 text-white text-sm min-h-[36px] max-h-[150px] resize-none overflow-hidden multi-line-input"
                           rows={1}
                           style={{ height: '36px', lineHeight: '1.2' }}
                         />

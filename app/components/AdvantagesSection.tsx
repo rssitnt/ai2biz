@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { FiCheckCircle, FiClock, FiRefreshCw } from 'react-icons/fi';
 
 const advantages = [
@@ -23,17 +23,35 @@ const advantages = [
 ];
 
 const AdvantagesSection = () => {
-  const [flipped, setFlipped] = useState<number[]>([]);
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
 
-  const toggleFlip = (index: number) => {
-    if (flipped.includes(index)) {
-      setFlipped(flipped.filter(i => i !== index));
-    } else {
-      setFlipped([...flipped, index]);
-    }
+  // Анимация для заголовка и описания
+  const titleVariants = {
+    visible: { opacity: 1, y: 0, filter: 'blur(0px)' },
+    hidden: { opacity: 0, y: -20, filter: 'blur(5px)' }
   };
 
-  const isFlipped = (index: number) => flipped.includes(index);
+  const descriptionVariants = {
+    hidden: { opacity: 0, y: 30, filter: 'blur(8px)' },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      filter: 'blur(0px)',
+      transition: {
+        duration: 0.4,
+        ease: [0.22, 1, 0.36, 1]
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: 30, 
+      filter: 'blur(8px)',
+      transition: {
+        duration: 0.2,
+        ease: [0.22, 1, 0.36, 1]
+      }
+    }
+  };
 
   return (
     <section id="advantages" className="pt-28 pb-20 relative overflow-hidden bg-black">
@@ -59,61 +77,54 @@ const AdvantagesSection = () => {
           {advantages.map((advantage, i) => (
             <div 
               key={i}
-              className="relative h-80 perspective-1000 cursor-pointer gpu-accelerated"
-              onMouseEnter={() => toggleFlip(i)}
-              onMouseLeave={() => toggleFlip(i)}
+              className="relative h-80 card cursor-pointer gpu-accelerated transition-all duration-300 hover:scale-[1.02] hover:shadow-lg overflow-hidden"
+              onMouseEnter={() => setHoveredCard(i)}
+              onMouseLeave={() => setHoveredCard(null)}
+              onTouchStart={() => setHoveredCard(i === hoveredCard ? null : i)}
             >
-              <motion.div 
-                className="absolute inset-0 w-full h-full"
-                animate={{ 
-                  rotateY: isFlipped(i) ? 180 : 0
-                }}
-                transition={{ 
-                  duration: 0.8, 
-                  type: 'spring',
-                  damping: 22,
-                  stiffness: 120,
-                  mass: 1.2
-                }}
-                style={{ 
-                  transformStyle: 'preserve-3d'
-                }}
-              >
-                {/* Передняя сторона карточки */}
-                <div 
-                  className="absolute inset-0 p-8 flex flex-col items-center justify-center text-center card backface-hidden"
-                  style={{ 
-                    backfaceVisibility: 'hidden',
-                    opacity: isFlipped(i) ? 0 : 1,
-                    transition: 'all 0.8s cubic-bezier(0.45, 0, 0.25, 1)'
-                  }}
+              <div className="absolute inset-0 flex flex-col items-center justify-center p-8">
+                {/* Иконка и заголовок (всегда видны) */}
+                <motion.div 
+                  className="flex flex-col items-center text-center"
+                  initial="visible"
+                  animate={hoveredCard === i ? "hidden" : "visible"}
+                  variants={titleVariants}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 >
                   <div className="mb-6">
                     {advantage.icon}
                   </div>
                   <h3 className="text-2xl font-bold mb-4">{advantage.title}</h3>
-                </div>
+                </motion.div>
                 
-                {/* Задняя сторона карточки */}
-                <div 
-                  className="absolute inset-0 p-8 flex flex-col items-center justify-center text-center card backface-hidden"
-                  style={{ 
-                    backfaceVisibility: 'hidden',
-                    transform: 'rotateY(180deg)',
-                    opacity: isFlipped(i) ? 1 : 0,
-                    transition: 'all 0.8s cubic-bezier(0.45, 0, 0.25, 1)'
-                  }}
-                >
-                  <p className="opacity-70">{advantage.description}</p>
-                </div>
-              </motion.div>
+                {/* Описание с стандартной анимацией */}
+                <AnimatePresence mode="wait">
+                  {hoveredCard === i && (
+                    <motion.div
+                      key={`description-${i}`}
+                      className="absolute inset-0 p-8 flex flex-col items-center justify-center"
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      variants={descriptionVariants}
+                    >
+                      <div className="bg-zinc-900/50 backdrop-blur-sm p-4 rounded-xl w-full h-full flex items-center justify-center">
+                        <p className="text-center">{advantage.description}</p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
               
               {/* Эффект свечения при наведении */}
-              <div
-                className="absolute inset-0 rounded-xl bg-zinc-800/20 blur-xl -z-10 transition-opacity duration-700"
-                style={{
-                  opacity: isFlipped(i) ? 0.7 : 0
+              <motion.div
+                className="absolute inset-0 rounded-xl bg-blue-500/5 blur-xl -z-10"
+                initial={{ opacity: 0 }}
+                animate={{ 
+                  opacity: hoveredCard === i ? 0.7 : 0,
+                  scale: hoveredCard === i ? 1.1 : 1
                 }}
+                transition={{ duration: 0.4 }}
               />
             </div>
           ))}

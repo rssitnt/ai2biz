@@ -127,21 +127,19 @@ const CasesSection = () => {
         // Клонируем первую группу карточек и добавляем в конец
         const cards = innerCarouselRef.current.children;
         if (cards.length === cases.length) {
-          // Добавляем клоны в начало и конец
-          for (let i = 0; i < Math.min(4, cases.length); i++) {
-            const cloneStart = cards[i].cloneNode(true) as HTMLElement;
-            const cloneEnd = cards[cases.length - 1 - i].cloneNode(true) as HTMLElement;
-            innerCarouselRef.current.insertBefore(cloneEnd, innerCarouselRef.current.firstChild);
-            innerCarouselRef.current.appendChild(cloneStart);
+          // Добавляем больше клонов для более надежной бесконечной карусели
+          for (let i = 0; i < cases.length; i++) {
+            const clone = cards[i].cloneNode(true) as HTMLElement;
+            innerCarouselRef.current.appendChild(clone);
           }
           setIsCloned(true);
           
-          // Прокручиваем к первому элементу (пропуская клоны)
+          // Прокручиваем к первому элементу
           setTimeout(() => {
             if (outerCarouselRef.current) {
               const cardWidth = cards[0].clientWidth || 0;
               const gapWidth = 24;
-              outerCarouselRef.current.scrollLeft = (cardWidth + gapWidth) * Math.min(4, cases.length);
+              outerCarouselRef.current.scrollLeft = 0; // Стартуем с начала для более предсказуемого поведения
             }
           }, 100);
         }
@@ -154,16 +152,16 @@ const CasesSection = () => {
   // Автоматическое прокручивание карусели с постоянной скоростью
   useEffect(() => {
     let animationId: number | null = null;
-    const speed = 1.2; // Скорость прокрутки
-    let direction = 1; // 1 для движения вправо, -1 для движения влево
-    let frameSkip = 0; // Пропуск кадров для оптимизации
+    const speed = 0.6; // Уменьшаем скорость для более плавного движения
     
     const animate = () => {
-      if (isPaused || !outerCarouselRef.current || !innerCarouselRef.current || isDragging) return;
+      if (!outerCarouselRef.current || !innerCarouselRef.current) {
+        animationId = requestAnimationFrame(animate);
+        return;
+      }
       
-      // Пропускаем каждый второй кадр для снижения нагрузки
-      frameSkip++;
-      if (frameSkip % 2 !== 0) {
+      // Если пользователь взаимодействует с каруселью - пропускаем кадр
+      if (isPaused || isDragging) {
         animationId = requestAnimationFrame(animate);
         return;
       }
@@ -171,27 +169,33 @@ const CasesSection = () => {
       const carousel = outerCarouselRef.current;
       const container = innerCarouselRef.current;
       
-      // Двигаем карусель
-      carousel.scrollLeft += speed * direction;
+      // Всегда движемся только вправо для бесконечной карусели
+      carousel.scrollLeft += speed;
       
-      // Проверяем, не достигли ли мы конца или начала
-      const cardWidth = container.firstElementChild?.clientWidth || 0;
-      const gapWidth = 24;
-      const totalWidth = cardWidth * cases.length + gapWidth * (cases.length - 1);
+      // Проверка края для циклического перехода
+      // Если достигли края, перепрыгиваем в начало
+      const maxScroll = carousel.scrollWidth - carousel.clientWidth;
       
-      // Если достигли конца или начала, меняем направление
-      if (carousel.scrollLeft >= totalWidth - carousel.clientWidth) {
-        direction = -1;
-      } else if (carousel.scrollLeft <= 0) {
-        direction = 1;
+      if (carousel.scrollLeft >= maxScroll - 20) {
+        // Прыгаем в начало для бесконечного цикла
+        carousel.scrollLeft = 0;
       }
       
       animationId = requestAnimationFrame(animate);
     };
     
-    animationId = requestAnimationFrame(animate);
+    // Запускаем анимацию с небольшой задержкой для инициализации
+    const timeoutId = setTimeout(() => {
+      animationId = requestAnimationFrame(animate);
+      
+      // Форсируем начальное движение
+      if (outerCarouselRef.current) {
+        outerCarouselRef.current.scrollLeft = 0;
+      }
+    }, 1000);
     
     return () => {
+      clearTimeout(timeoutId);
       if (animationId) cancelAnimationFrame(animationId);
     };
   }, [isPaused, isDragging]);
@@ -365,7 +369,9 @@ const CasesSection = () => {
           scrollBehavior: isDragging ? 'auto' : 'smooth', 
           userSelect: 'none',
           WebkitUserSelect: 'none',
-          scrollSnapType: 'x mandatory'
+          scrollSnapType: 'x mandatory',
+          position: 'relative',
+          zIndex: 20 // Повышаем z-index, чтобы быть выше свечения курсора
         }}
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={handleMouseLeave}
@@ -392,7 +398,8 @@ const CasesSection = () => {
                 willChange: 'transform',
                 pointerEvents: isDragging ? 'none' : 'auto',
                 borderRadius: '12px',
-                scrollSnapAlign: 'start'
+                scrollSnapAlign: 'start',
+                zIndex: 2 // Добавляем z-index карточкам
               }}
               onMouseEnter={() => setActiveCase(i)}
               onMouseLeave={() => setActiveCase(null)}

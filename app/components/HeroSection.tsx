@@ -39,7 +39,10 @@ const HeroSection = () => {
         <div className="absolute inset-0 bg-black/60 z-10" />
         <Suspense fallback={<div className="absolute inset-0 bg-black"></div>}>
           <ReactPlayer
-            url="/video.mov" 
+            url={[
+              "/video.mp4", 
+              "/video.mov"
+            ]}
             width="100%"
             height="100%"
             playing={true}
@@ -56,7 +59,8 @@ const HeroSection = () => {
                     width: '100%',
                     height: '100%'
                   }
-                }
+                },
+                forceVideo: true
               }
             }}
             style={{
