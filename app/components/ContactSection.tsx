@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { FaTelegram, FaYoutube, FaLinkedin } from 'react-icons/fa';
 import { FiSend, FiUser, FiBriefcase, FiMail, FiPhone, FiMessageSquare } from 'react-icons/fi';
 import { submitLead } from '../utils/supabase';
+import AnimatedText from './AnimatedText';
 
 type ContactMethod = 'email' | 'phone' | 'telegram';
 
@@ -85,13 +86,21 @@ const ContactSection = () => {
         <div className="flex justify-center w-full mb-16">
           <motion.h2 
             className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 via-purple-500 to-blue-600 text-transparent bg-clip-text mt-4 animate-gradient-x"
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ 
-              duration: 0.8, 
-              ease: [0.25, 0.1, 0.25, 1]
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            whileInView={{ 
+              opacity: 1, 
+              y: 0, 
+              scale: 1,
+              transition: {
+                duration: 1.2,
+                ease: [0.25, 0.1, 0.35, 1.0],
+                scale: {
+                  duration: 1,
+                  ease: [0.25, 0.1, 0.35, 1.0]
+                }
+              }
             }}
+            viewport={{ once: true, margin: "-10%" }}
           >
             Давайте созидать вместе
           </motion.h2>
@@ -108,7 +117,13 @@ const ContactSection = () => {
               ease: "easeOut",
             }}
           >
-            <h3 className="text-2xl font-bold mb-6">Оставить заявку</h3>
+            <AnimatedText 
+              text="Оставить заявку"
+              tag="h3"
+              type="word"
+              animation="fadeUp"
+              className="text-2xl font-bold mb-6"
+            />
             
             {submitResult && (
               <div className={`mb-4 p-3 rounded-lg ${submitResult.success ? 'bg-green-900/30 text-green-400' : 'bg-red-900/30 text-red-400'}`}>
@@ -119,9 +134,12 @@ const ContactSection = () => {
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div className="space-y-1">
-                  <label className="text-sm opacity-70 flex items-center gap-2">
-                    <FiUser /> ФИО
-                  </label>
+                  <AnimatedText 
+                    text={<label className="text-sm opacity-70 flex items-center gap-2">
+                      <FiUser /> ФИО
+                    </label>}
+                    delay={0.1}
+                  />
                   <input
                     type="text"
                     name="name"
@@ -134,9 +152,12 @@ const ContactSection = () => {
                 </div>
                 
                 <div className="space-y-1">
-                  <label className="text-sm opacity-70 flex items-center gap-2">
-                    <FiBriefcase /> Компания
-                  </label>
+                  <AnimatedText 
+                    text={<label className="text-sm opacity-70 flex items-center gap-2">
+                      <FiBriefcase /> Компания
+                    </label>}
+                    delay={0.15}
+                  />
                   <input
                     type="text"
                     name="company"
@@ -149,9 +170,12 @@ const ContactSection = () => {
                 </div>
                 
                 <div className="space-y-1">
-                  <label className="text-sm opacity-70 flex items-center gap-2">
-                    <FiBriefcase /> Должность
-                  </label>
+                  <AnimatedText 
+                    text={<label className="text-sm opacity-70 flex items-center gap-2">
+                      <FiBriefcase /> Должность
+                    </label>}
+                    delay={0.2}
+                  />
                   <input
                     type="text"
                     name="position"
@@ -163,9 +187,12 @@ const ContactSection = () => {
                 </div>
                 
                 <div className="space-y-1">
-                  <label className="text-sm opacity-70 flex items-center gap-2">
-                    <FiMail /> Email
-                  </label>
+                  <AnimatedText 
+                    text={<label className="text-sm opacity-70 flex items-center gap-2">
+                      <FiMail /> Email
+                    </label>}
+                    delay={0.25}
+                  />
                   <input
                     type="email"
                     name="email"
@@ -178,9 +205,12 @@ const ContactSection = () => {
                 </div>
                 
                 <div className="space-y-1">
-                  <label className="text-sm opacity-70 flex items-center gap-2">
-                    <FiPhone /> Телефон
-                  </label>
+                  <AnimatedText 
+                    text={<label className="text-sm opacity-70 flex items-center gap-2">
+                      <FiPhone /> Телефон
+                    </label>}
+                    delay={0.3}
+                  />
                   <input
                     type="tel"
                     name="phone"
@@ -192,9 +222,12 @@ const ContactSection = () => {
                 </div>
                 
                 <div className="space-y-1">
-                  <label className="text-sm opacity-70 flex items-center gap-2">
-                    <FaTelegram /> Telegram
-                  </label>
+                  <AnimatedText 
+                    text={<label className="text-sm opacity-70 flex items-center gap-2">
+                      <FaTelegram /> Telegram
+                    </label>}
+                    delay={0.35}
+                  />
                   <input
                     type="text"
                     name="telegram"
@@ -207,7 +240,12 @@ const ContactSection = () => {
               </div>
               
               <div className="mb-4">
-                <label className="text-sm opacity-70 block mb-1">Предпочтительный способ связи</label>
+                <AnimatedText 
+                  text="Предпочтительный способ связи"
+                  tag="span"
+                  delay={0.4}
+                  className="text-sm opacity-70 block mb-1"
+                />
                 <select
                   name="contactMethod"
                   value={formData.contactMethod}
@@ -221,9 +259,12 @@ const ContactSection = () => {
               </div>
               
               <div className="mb-6">
-                <label className="text-sm opacity-70 flex items-center gap-2 mb-1">
-                  <FiMessageSquare /> Сообщение
-                </label>
+                <AnimatedText 
+                  text={<label className="text-sm opacity-70 flex items-center gap-2 mb-1">
+                    <FiMessageSquare /> Сообщение
+                  </label>}
+                  delay={0.45}
+                />
                 <textarea
                   name="message"
                   value={formData.message}
@@ -257,34 +298,69 @@ const ContactSection = () => {
             }}
           >
             <div className="card p-6">
-              <h3 className="text-2xl font-bold mb-6">Связаться с нами</h3>
+              <AnimatedText 
+                text="Связаться с нами"
+                tag="h3"
+                type="word"
+                animation="fadeUp"
+                className="text-2xl font-bold mb-6"
+                delay={0.1}
+              />
               
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm opacity-70 mb-1">Email</p>
-                  <a href="mailto:info@ai2biz.ru" className="hover:text-blue-500 transition-colors duration-500 ease-smooth">
-                    info@ai2biz.ru
-                  </a>
+                  <AnimatedText 
+                    text="Email" 
+                    className="text-sm opacity-70 mb-1"
+                    delay={0.2}
+                  />
+                  <AnimatedText 
+                    text={<a href="mailto:info@ai2biz.ru" className="hover:text-blue-500 transition-colors duration-500 ease-smooth">
+                      info@ai2biz.ru
+                    </a>}
+                    delay={0.25}
+                  />
                 </div>
                 
                 <div>
-                  <p className="text-sm opacity-70 mb-1">Телефон</p>
-                  <a href="tel:+79991234567" className="hover:text-blue-500 transition-colors duration-500 ease-smooth">
-                    +7 (999) 123-45-67
-                  </a>
+                  <AnimatedText 
+                    text="Телефон" 
+                    className="text-sm opacity-70 mb-1"
+                    delay={0.3}
+                  />
+                  <AnimatedText 
+                    text={<a href="tel:+79991234567" className="hover:text-blue-500 transition-colors duration-500 ease-smooth">
+                      +7 (999) 123-45-67
+                    </a>}
+                    delay={0.35}
+                  />
                 </div>
                 
                 <div>
-                  <p className="text-sm opacity-70 mb-1">Telegram</p>
-                  <a href="https://t.me/ai2biz" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors duration-500 ease-smooth">
-                    @ai2biz
-                  </a>
+                  <AnimatedText 
+                    text="Telegram" 
+                    className="text-sm opacity-70 mb-1"
+                    delay={0.4}
+                  />
+                  <AnimatedText 
+                    text={<a href="https://t.me/ai2biz" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 transition-colors duration-500 ease-smooth">
+                      @ai2biz
+                    </a>}
+                    delay={0.45}
+                  />
                 </div>
               </div>
             </div>
             
             <div className="card p-6">
-              <h3 className="text-xl font-bold mb-4">Наши соцсети</h3>
+              <AnimatedText 
+                text="Наши соцсети"
+                tag="h3"
+                type="word"
+                animation="fadeUp"
+                className="text-xl font-bold mb-4"
+                delay={0.5}
+              />
               
               <div className="flex space-x-6">
                 <a 
@@ -316,9 +392,12 @@ const ContactSection = () => {
               </div>
             </div>
             
-            <p className="text-center opacity-50 text-sm">
-              Сайт ПОЛНОСТЬЮ сгенерирован искусственным интеллектом
-            </p>
+            <AnimatedText 
+              text="Сайт ПОЛНОСТЬЮ сгенерирован искусственным интеллектом"
+              animation="fadeUp"
+              className="text-center opacity-50 text-sm"
+              delay={0.6}
+            />
           </motion.div>
         </div>
       </div>

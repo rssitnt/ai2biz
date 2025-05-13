@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiCheckCircle, FiClock, FiRefreshCw } from 'react-icons/fi';
+import AnimatedText from './AnimatedText';
 
 const advantages = [
   {
@@ -75,17 +76,19 @@ const AdvantagesSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {advantages.map((advantage, i) => (
-            <div 
+            <motion.div 
               key={i}
               className="relative h-80 card cursor-pointer rounded-xl overflow-hidden bg-zinc-900/50"
               onMouseEnter={() => setHoveredCard(i)}
               onMouseLeave={() => setHoveredCard(null)}
               onTouchStart={() => setHoveredCard(i === hoveredCard ? null : i)}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              viewport={{ once: true, margin: "-50px" }}
               style={{ 
                 border: 'none', 
                 boxShadow: 'none',
-                transform: hoveredCard === i ? 'scale(1.02)' : 'scale(1)',
-                transition: 'transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)',
                 willChange: 'transform'
               }}
             >
@@ -101,7 +104,14 @@ const AdvantagesSection = () => {
                   <div className="mb-6">
                     {advantage.icon}
                   </div>
-                  <h3 className="text-2xl font-bold mb-4">{advantage.title}</h3>
+                  <AnimatedText 
+                    text={advantage.title}
+                    tag="h3"
+                    type="word"
+                    animation="fadeUp"
+                    className="text-2xl font-bold mb-4"
+                    delay={i * 0.2}
+                  />
                 </motion.div>
                 
                 {/* Описание с стандартной анимацией */}
@@ -115,8 +125,14 @@ const AdvantagesSection = () => {
                       exit="exit"
                       variants={descriptionVariants}
                     >
-                      <div className="bg-zinc-900/50 backdrop-blur-sm p-4 rounded-xl w-full h-full flex items-center justify-center">
-                        <p className="text-center">{advantage.description}</p>
+                      <div className="p-4 rounded-xl w-full h-full flex items-center justify-center">
+                        <AnimatedText 
+                          text={advantage.description}
+                          type="word"
+                          animation="fadeUp"
+                          className="text-center"
+                          delay={0.2}
+                        />
                       </div>
                     </motion.div>
                   )}
@@ -128,12 +144,12 @@ const AdvantagesSection = () => {
                 className="absolute inset-0 rounded-xl bg-blue-500/5 blur-xl -z-10"
                 initial={{ opacity: 0 }}
                 animate={{ 
-                  opacity: hoveredCard === i ? 0.7 : 0,
-                  scale: hoveredCard === i ? 1.1 : 1
+                  opacity: 0,
+                  scale: 1
                 }}
                 transition={{ duration: 0.4 }}
               />
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { FiArrowRight } from 'react-icons/fi';
+import { motion } from 'framer-motion';
+import AnimatedText from './AnimatedText';
 
 type Solution = {
   title: string;
@@ -55,9 +57,18 @@ const SolutionsSection = () => {
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex justify-center w-full mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mt-4">
+          <motion.h2 
+            className="text-4xl md:text-5xl font-bold text-white mt-4"
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ 
+              duration: 0.8, 
+              ease: [0.25, 0.1, 0.25, 1]
+            }}
+          >
             Наши решения
-          </h2>
+          </motion.h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -75,17 +86,52 @@ const SolutionsSection = () => {
               }}
             >
               <div className="p-6 flex-1 flex flex-col">
-                <h3 className="text-xl font-semibold mb-3">{solution.title}</h3>
-                <p className="opacity-70 mb-5">{solution.description}</p>
+                <AnimatedText 
+                  text={solution.title}
+                  tag="h3"
+                  type="word"
+                  animation="fadeUp"
+                  className="text-xl font-semibold mb-3"
+                  delay={i * 0.1}
+                />
+                
+                <AnimatedText 
+                  text={solution.description}
+                  animation="fadeUp"
+                  className="opacity-70 mb-5"
+                  delay={i * 0.1 + 0.1}
+                />
                 
                 <div className="mb-6 flex-1">
-                  <h4 className="text-sm font-semibold opacity-80 mb-3">Возможности:</h4>
+                  <AnimatedText 
+                    text="Возможности:"
+                    tag="h4"
+                    animation="fadeUp"
+                    className="text-sm font-semibold opacity-80 mb-3"
+                    delay={i * 0.1 + 0.2}
+                  />
+                  
                   <ul className="space-y-2">
                     {solution.features.map((feature, j) => (
-                      <li key={j} className="flex items-start opacity-70">
+                      <motion.li 
+                        key={j} 
+                        className="flex items-start opacity-70"
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ 
+                          duration: 0.3, 
+                          delay: i * 0.1 + j * 0.07 + 0.3 
+                        }}
+                      >
                         <span className="text-blue-500 mr-2">•</span>
-                        <span>{feature}</span>
-                      </li>
+                        <AnimatedText 
+                          text={feature}
+                          animation="fadeUp"
+                          type="word"
+                          delay={i * 0.05 + j * 0.05}
+                        />
+                      </motion.li>
                     ))}
                   </ul>
                 </div>

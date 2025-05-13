@@ -490,11 +490,11 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                             alt="Телеграм" 
                             width={32} 
                             height={32} 
-                            className="object-contain drop-shadow-md hover:scale-110 transition-transform duration-200" 
+                            className="object-contain drop-shadow-md" 
                             priority
                           />
                         </button>
-                        <span className="absolute left-1/2 top-full mt-2 text-xs text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-pre bg-zinc-800/90 py-1 px-2 rounded pointer-events-none transform -translate-x-1/2 text-center">Перейти в<br/>Телеграм</span>
+                        <span className="absolute left-1/2 top-full mt-2 text-xs text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap bg-zinc-800/90 py-1 px-2 rounded pointer-events-none transform -translate-x-1/2">Перейти в Телеграм</span>
                       </div>
                     ) : (
                       <button 
@@ -510,7 +510,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                 
                 {hasChosenChatType && chatType === 'site' && (
                   <div 
-                    className="relative flex p-1 bg-[#1C1C1E]/90 rounded-full shadow-sm cursor-pointer select-none group"
+                    className="relative flex p-1 bg-[#1C1C1E]/90 rounded-full shadow-sm cursor-pointer select-none"
                     onClick={toggleInputMode}
                   >
                     {/* Подвижный белый фон-индикатор */}
@@ -540,9 +540,6 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                         }`} 
                       />
                     </div>
-                    
-                    {/* Всплывающая подпись */}
-                    <span className="absolute left-1/2 top-full mt-2 text-xs text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-pre bg-zinc-800/90 py-1 px-2 rounded pointer-events-none transform -translate-x-1/2 text-center">Переписка<br/>или аудио</span>
                   </div>
                 )}
               </div>
@@ -575,7 +572,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                           alt="Телеграм" 
                           width={32} 
                           height={32} 
-                          className="object-contain drop-shadow-md hover:scale-110 transition-transform duration-200" 
+                          className="object-contain drop-shadow-md" 
                           priority
                         />
                       </button>
@@ -589,7 +586,7 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                 <div>
                   <div 
                     ref={chatContainerRef}
-                    className="p-3 mb-8 h-40 sm:h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent"
+                    className="p-3 mb-4 h-40 sm:h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent"
                     style={{ borderRadius: '20px' }}
                   >
                     {messages.map((message, index) => (
@@ -608,13 +605,13 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                     ))}
                   </div>
                   
-                  <div className="min-h-[52px] flex items-start relative pb-10">
+                  <div className="min-h-[52px] flex items-start relative pb-6">
                     {/* Условный рендеринг: для текстового режима показываем поле ввода, для голосового - микрофон */}
                     {inputMode === 'text' ? (
                       // Текстовый режим
-                      <div className="w-full flex items-start relative justify-center mt-6">
+                      <div className="w-full flex items-start relative justify-start mt-4">
                         <div className="w-full relative flex items-center overflow-hidden" 
-                          style={{ borderRadius: '30px' }}
+                          style={{ borderRadius: '20px' }}
                         >
                           <textarea 
                             ref={textareaRef}
@@ -622,96 +619,84 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
                             onChange={handleInputChange}
                             onKeyDown={handleKeyPress}
                             placeholder="Введите сообщение..."
-                            className="w-full pr-[80px] glassmorphism py-2 pl-5 placeholder-opacity-50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 bg-transparent text-white text-sm min-h-[42px] max-h-[120px] resize-none overflow-hidden"
+                            className="w-full pr-[80px] glassmorphism py-2 pl-3 placeholder-opacity-50 focus:outline-none focus:ring-1 focus:ring-blue-500/30 bg-transparent text-white text-sm min-h-[36px] max-h-[120px] resize-none overflow-hidden"
                             rows={1}
-                            style={{ height: '42px', lineHeight: '1.2', borderRadius: '30px', paddingTop: '12px' }}
+                            style={{ height: '36px', lineHeight: '1.2', borderRadius: '20px', paddingTop: '10px' }}
                           />
-                          <div className="absolute right-3 top-1/2 flex gap-1 items-center transform -translate-y-1/2">
-                            <div className="relative group">
-                              <button 
-                                onClick={toggleSpeechRecognition}
-                                className={`h-7 w-7 flex-shrink-0 flex items-center justify-center rounded-full text-white hover:bg-zinc-700 transition-all duration-300 ${
-                                  isSpeechRecognizing 
-                                    ? 'bg-red-500 voice-input-active' 
-                                    : 'bg-transparent'
-                                }`}
-                                aria-label={isSpeechRecognizing ? "Остановить голосовой ввод" : "Голосовой ввод текста"}
-                              >
-                                <div className="relative">
-                                  <MdKeyboardVoice className="text-sm" />
-                                  {isSpeechRecognizing && (
-                                    <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
-                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-400"></span>
-                                    </span>
-                                  )}
-                                </div>
-                              </button>
-                              <span className="absolute left-1/2 -top-8 mt-2 text-xs text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-pre bg-zinc-800/90 py-1 px-2 rounded pointer-events-none transform -translate-x-1/2 text-center">Голосовой<br/>ввод</span>
-                            </div>
-                            <div className="relative group">
-                              <button 
-                                onClick={handleSendMessage}
-                                className={`h-7 w-7 flex-shrink-0 flex items-center justify-center rounded-full text-white transition-all duration-300 ${
-                                  inputText.trim().length > 0 
-                                    ? 'bg-gradient-to-r from-blue-500 to-purple-500' 
-                                    : 'bg-transparent hover:bg-zinc-700'
-                                }`}
-                                disabled={inputText.trim().length === 0}
-                                aria-label="Отправить сообщение"
-                              >
-                                <FaArrowUp className="text-xs" />
-                              </button>
-                              <span className="absolute left-1/2 -top-8 mt-2 text-xs text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-pre bg-zinc-800/90 py-1 px-2 rounded pointer-events-none transform -translate-x-1/2 text-center">Отправить<br/>сообщение</span>
-                            </div>
+                          <div className="absolute right-1 bottom-[8px] flex gap-1 items-center">
+                            <button 
+                              onClick={toggleSpeechRecognition}
+                              className={`h-7 w-7 flex-shrink-0 flex items-center justify-center rounded-full text-white hover:bg-zinc-700 transition-all duration-300 ${
+                                isSpeechRecognizing 
+                                  ? 'bg-red-500 voice-input-active' 
+                                  : 'bg-transparent'
+                              }`}
+                              aria-label={isSpeechRecognizing ? "Остановить голосовой ввод" : "Голосовой ввод текста"}
+                            >
+                              <div className="relative">
+                                <MdKeyboardVoice className="text-sm" />
+                                {isSpeechRecognizing && (
+                                  <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-300 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-400"></span>
+                                  </span>
+                                )}
+                              </div>
+                            </button>
+                            <button 
+                              onClick={handleSendMessage}
+                              className={`h-7 w-7 flex-shrink-0 flex items-center justify-center rounded-full text-white transition-all duration-300 ${
+                                inputText.trim().length > 0 
+                                  ? 'bg-gradient-to-r from-blue-500 to-purple-500' 
+                                  : 'bg-transparent hover:bg-zinc-700'
+                              }`}
+                              disabled={inputText.trim().length === 0}
+                              aria-label="Отправить сообщение"
+                            >
+                              <FaArrowUp className="text-xs" />
+                            </button>
                           </div>
                         </div>
                       </div>
                     ) : (
                       // Голосовой режим
-                      <div className="w-full flex items-center justify-center min-h-[44px] mt-6 py-2">
-                        <div className="relative group">
-                          <button 
-                            onClick={handleMicButtonClick}
-                            className={`mic-button ${isRecording ? 'active' : ''}`}
-                            aria-label="Включить микрофон"
-                          >
-                            {isRecording && isPulsing && (
-                              <div className="mic-pulse animate-pulse-out"></div>
-                            )}
-                            <BsMicFill 
-                              className={`mic-icon text-xl transition-all duration-300 ${isRecording ? 'text-white' : 'text-blue-400'}`}
-                              style={{ 
-                                transform: isRecording ? `scale(${1 + volumeLevel * 0.3})` : 'scale(1)'
-                              }}
-                            />
-                            {isRecording && (
-                              <div className="mic-wave">
-                                {volumeBars.map((height, index) => (
-                                  <div 
-                                    key={index}
-                                    className="mic-wave-bar"
-                                    style={{ height: `${height}px` }}
-                                  ></div>
-                                ))}
-                              </div>
-                            )}
-                          </button>
-                          <span className="absolute left-1/2 -top-8 mt-2 text-xs text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-pre bg-zinc-800/90 py-1 px-2 rounded pointer-events-none transform -translate-x-1/2 text-center">Запись<br/>голоса</span>
-                        </div>
+                      <div className="w-full flex items-center justify-center min-h-[44px]">
+                        <button 
+                          onClick={handleMicButtonClick}
+                          className={`mic-button ${isRecording ? 'active' : ''}`}
+                          aria-label="Включить микрофон"
+                        >
+                          {isRecording && isPulsing && (
+                            <div className="mic-pulse animate-pulse-out"></div>
+                          )}
+                          <BsMicFill 
+                            className={`mic-icon text-xl transition-all duration-300 ${isRecording ? 'text-white' : 'text-blue-400'}`}
+                            style={{ 
+                              transform: isRecording ? `scale(${1 + volumeLevel * 0.3})` : 'scale(1)'
+                            }}
+                          />
+                          {isRecording && (
+                            <div className="mic-wave">
+                              {volumeBars.map((height, index) => (
+                                <div 
+                                  key={index}
+                                  className="mic-wave-bar"
+                                  style={{ height: `${height}px` }}
+                                ></div>
+                              ))}
+                            </div>
+                          )}
+                        </button>
                         
                         {isRecording && (
-                          <div className="absolute top-1/2 right-3 z-10 transform -translate-y-1/2">
-                            <div className="relative group">
-                              <button 
-                                onClick={handleSendMessage}
-                                className="h-9 w-9 flex-shrink-0 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-white hover:shadow-lg hover:scale-105 transition-all duration-300"
-                                aria-label="Отправить голосовое сообщение"
-                              >
-                                <FaArrowUp className="text-xs" />
-                              </button>
-                              <span className="absolute left-1/2 -top-8 mt-2 text-xs text-zinc-300 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-pre bg-zinc-800/90 py-1 px-2 rounded pointer-events-none transform -translate-x-1/2 text-center">Отправить<br/>сообщение</span>
-                            </div>
+                          <div className="absolute bottom-[2px] right-3 z-10">
+                            <button 
+                              onClick={handleSendMessage}
+                              className="h-9 w-9 flex-shrink-0 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-white hover:shadow-lg hover:scale-105 transition-all duration-300"
+                              aria-label="Отправить голосовое сообщение"
+                            >
+                              <FaArrowUp className="text-xs" />
+                            </button>
                           </div>
                         )}
                       </div>

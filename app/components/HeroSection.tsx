@@ -5,6 +5,7 @@ import { useInView } from "react-intersection-observer";
 import { motion } from 'framer-motion';
 import AmbientVideo from './AmbientVideo';
 import dynamic from 'next/dynamic';
+import AnimatedText from './AnimatedText';
 
 // Динамический импорт ReactPlayer с отключенным SSR
 const ReactPlayer = dynamic(() => import('react-player'), { ssr: false });
@@ -94,18 +95,17 @@ const HeroSection = () => {
         </motion.div>
 
         <motion.div
-          variants={textVariants}
-          initial="hidden"
-          animate="visible"
           className="max-w-3xl mx-auto mb-12 gpu-accelerated"
         >
-          <h2 className="text-2xl md:text-4xl font-medium relative">
-            <span 
-              className="relative z-10 inline-block bg-gradient-to-r from-blue-400 via-purple-500 to-blue-600 text-transparent bg-clip-text animate-gradient-x" 
-            >
-              ИИ-агенты для автоматизации бизнеса
-            </span>
-          </h2>
+          <AnimatedText 
+            text="Давайте созидать вместе"
+            tag="h2"
+            type="word"
+            animation="fadeUp"
+            className="text-2xl md:text-4xl font-medium relative"
+            delay={0.2}
+            once={true}
+          />
         </motion.div>
 
         <motion.div
