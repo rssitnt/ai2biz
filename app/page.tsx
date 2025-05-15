@@ -12,9 +12,15 @@ import { useState } from 'react';
 
 export default function Home() {
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [assistantInputText, setAssistantInputText] = useState('');
 
   const handleAssistantToggle = () => {
     setIsAssistantOpen(prev => !prev);
+  };
+
+  const handleOpenAssistantWithText = (text: string) => {
+    setAssistantInputText(text);
+    setIsAssistantOpen(true);
   };
 
   return (
@@ -29,7 +35,7 @@ export default function Home() {
       <HeroSection />
       
       {/* Секция "Наши решения" */}
-      <SolutionsSection />
+      <SolutionsSection onOpenAssistant={handleOpenAssistantWithText} />
       
       {/* Секция "Преимущества" */}
       <AdvantagesSection />
@@ -41,7 +47,12 @@ export default function Home() {
       <ContactSection />
 
       {/* ИИ-ассистент */}
-      <AIAssistant isOpen={isAssistantOpen} onToggle={handleAssistantToggle} />
+      <AIAssistant 
+        isOpen={isAssistantOpen} 
+        onToggle={handleAssistantToggle} 
+        initialInputText={assistantInputText}
+        setInitialInputText={setAssistantInputText}
+      />
     </main>
   );
 }

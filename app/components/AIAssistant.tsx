@@ -56,9 +56,11 @@ type Message = {
 type AIAssistantProps = {
   isOpen: boolean;
   onToggle: () => void;
+  initialInputText?: string;
+  setInitialInputText?: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
+const AIAssistant = ({ isOpen, onToggle, initialInputText = '', setInitialInputText }: AIAssistantProps) => {
   // Состояния для чата
   const [chatType, setChatType] = useState<'site' | 'telegram'>('site');
   const [inputMode, setInputMode] = useState<'text' | 'voice'>('text');
@@ -93,6 +95,34 @@ const AIAssistant = ({ isOpen, onToggle }: AIAssistantProps) => {
       setHasChosenChatType(false);
     }
   }, [isOpen]);
+
+  // Эффект для установки initialInputText в поле ввода
+  useEffect(() => {
+    if (initialInputText && isOpen) {
+      setInputText(initialInputText);
+      // Сбрасываем значение, чтобы избежать повторной установки при повторном открытии
+      if (setInitialInputText) {
+        setInitialInputText('');
+      }
+      
+      // Если чат еще не выбран, автоматически выбираем чат на сайте
+      if (!hasChosenChatType) {
+        setHasChosenChatType(true);
+        setChatType('site');
+      }
+      
+      // Фокус на текстовое поле и установка курсора в конец текста
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        setTimeout(() => {
+          if (textareaRef.current) {
+            textareaRef.current.selectionStart = textareaRef.current.value.length;
+            textareaRef.current.selectionEnd = textareaRef.current.value.length;
+          }
+        }, 100);
+      }
+    }
+  }, [initialInputText, isOpen, hasChosenChatType, setInitialInputText]);
 
   // Обработчик выбора типа чата
   const handleChatTypeChoice = useCallback((type: 'site' | 'telegram') => {

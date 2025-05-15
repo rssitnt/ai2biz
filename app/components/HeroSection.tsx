@@ -98,7 +98,7 @@ const HeroSection = () => {
           className="max-w-3xl mx-auto mb-12 gpu-accelerated"
         >
           <AnimatedText 
-            text="Давайте созидать вместе"
+            text="ИИ-агенты для автоматизации бизнеса"
             tag="h2"
             type="word"
             animation="fadeUp"

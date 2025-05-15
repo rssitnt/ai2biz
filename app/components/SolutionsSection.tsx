@@ -11,6 +11,10 @@ type Solution = {
   features: string[];
 };
 
+type SolutionsSectionProps = {
+  onOpenAssistant: (text: string) => void;
+};
+
 const solutions: Solution[] = [
   {
     title: 'CRM-заполнение и оценка звонков',
@@ -42,13 +46,16 @@ const solutions: Solution[] = [
   }
 ];
 
-const SolutionsSection = () => {
+const SolutionsSection = ({ onOpenAssistant }: SolutionsSectionProps) => {
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [activeButtonIndex, setActiveButtonIndex] = useState<number | null>(null);
 
   const handleOpenAssistant = (solutionTitle: string, index: number) => {
     console.log(`Хочу узнать подробнее про ${solutionTitle}`);
     setActiveButtonIndex(index === activeButtonIndex ? null : index);
+    
+    // Вызываем функцию из props с автоматическим текстом для ассистента
+    onOpenAssistant(`Расскажи подробнее про ${solutionTitle}`);
   };
 
   return (
