@@ -40,10 +40,7 @@ const HeroSection = () => {
         <div className="absolute inset-0 bg-black/60 z-10" />
         <Suspense fallback={<div className="absolute inset-0 bg-black"></div>}>
           <ReactPlayer
-            url={[
-              "/video.mp4", 
-              "/video.mov"
-            ]}
+            url="/video.mov"
             width="100%"
             height="100%"
             playing={true}
@@ -71,7 +68,8 @@ const HeroSection = () => {
               width: '100%',
               height: '100%'
             }}
-            onError={() => console.error("Ошибка загрузки видео")}
+            onError={(e) => console.error("Ошибка загрузки видео:", e)}
+            onReady={() => console.log("Видео готово к воспроизведению")}
           />
         </Suspense>
         <div className="absolute inset-0 bg-[url('/noise.png')] opacity-5 mix-blend-soft-light" />
